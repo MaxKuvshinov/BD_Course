@@ -1,10 +1,11 @@
 import psycopg2
+from typing import List, Any, Dict
 
 
 def create_db(database_name: str, **params: dict) -> None:
     """Создание базы данных"""
 
-    conn = psycopg2.connect(dbname='postgres', **params)
+    conn = psycopg2.connect(dbname="postgres", **params)
     conn.autocommit = True
 
     cur = conn.cursor()
@@ -17,16 +18,19 @@ def create_db(database_name: str, **params: dict) -> None:
     conn = psycopg2.connect(dbname=database_name, **params)
 
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             CREATE TABLE IF NOT EXISTS companies (
                 company_id SERIAL PRIMARY KEY,
                 company_name VARCHAR(255) NOT NULL,
                 company_url VARCHAR(255)
             )
-        """)
+        """
+        )
 
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             CREATE TABLE IF NOT EXISTS vacancies (
                 company_id INTEGER NOT NULL REFERENCES companies(company_id),
                 vacancy_name VARCHAR(255) NOT NULL,
@@ -38,13 +42,14 @@ def create_db(database_name: str, **params: dict) -> None:
                 experience VARCHAR(255),
                 requirement TEXT
             )
-        """)
+        """
+        )
 
     conn.commit()
     conn.close()
 
 
-def insert_data(data, database_name, **params):
+def insert_data(data: List[Dict[str, Any]], database_name: str, **params: dict) -> None:
     """Вставка данных о компаниях и вакансиях в БД"""
 
     conn = psycopg2.connect(dbname=database_name, **params)
@@ -52,23 +57,35 @@ def insert_data(data, database_name, **params):
     with conn.cursor() as cur:
         for item in data:
             # Вставляем данные о компании в таблицу companies
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO companies (company_id, company_name, company_url)
                 VALUES (%s, %s, %s)
                 ON CONFLICT (company_id) DO NOTHING
-            """, (item['company_id'], item['company_name'], item['company_url']))
+            """,
+                (item["company_id"], item["company_name"], item["company_url"]),
+            )
 
             # Вставляем данные о вакансии в таблицу vacancies
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO vacancies (
                     company_id, vacancy_name, vacancy_url, salary_from,
                     salary_to, currency, description, experience, requirement
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (
-                item['company_id'], item['vacancy_name'], item['vacancy_url'],
-                item['salary_from'], item['salary_to'], item['currency'],
-                item['description'], item['experience'], item['requirement']
-            ))
+            """,
+                (
+                    item["company_id"],
+                    item["vacancy_name"],
+                    item["vacancy_url"],
+                    item["salary_from"],
+                    item["salary_to"],
+                    item["currency"],
+                    item["description"],
+                    item["experience"],
+                    item["requirement"],
+                ),
+            )
 
     conn.commit()
     conn.close()
