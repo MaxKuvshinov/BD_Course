@@ -30,7 +30,7 @@ def get_companies() -> List[Dict[str, Any]]:
 def get_vacancies(data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Функция для получения данных о компаниях и вакансиях"""
     list_vacancy = []
-    max_pages = 10  # Ограничение на количество страниц
+    max_pages = 10  # Ограничение на количество страниц.
 
     for company in data:
         company_id = company["company_id"]
