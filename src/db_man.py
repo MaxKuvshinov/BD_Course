@@ -14,13 +14,12 @@ class DBManager:
         """Получает список всех компаний и количество вакансий у каждой компании."""
         with self.conn.cursor() as cur:
             cur.execute("""
-                SELECT companies.company_name, COUNT(vacancies.vacancy_id)
+                SELECT companies.company_name, COUNT(vacancies.vacancy_url)
                 FROM companies
                 LEFT JOIN vacancies ON companies.company_id = vacancies.company_id
                 GROUP BY companies.company_name
             """)
             return cur.fetchall()
-
 
     def get_all_vacancies(self):
         """Получает список всех вакансий с указанием названия компании, названия вакансии, зарплаты и ссылки на вакансию."""

@@ -27,26 +27,33 @@ def get_companies():
 
 def get_vacancies(data):
     """Функция для получения данных о компаниях и вакансиях"""
-
     list_vacancy = []
+    max_pages = 10  # Ограничение на количество страниц
 
     for company in data:
         company_id = company['company_id']
-        url = f"https://api.hh.ru/vacancies?employer_id={company_id}"
-        response = requests.get(url)
-        if response.status_code == 200:
-            vacancy = response.json().get('items', [])
-            list_vacancy.extend(vacancy)
-        else:
-            print(f'Ошибка: {response.status_code} для компании ID {company_id}')
+        page = 0
+
+        while page < max_pages:
+            url = f"https://api.hh.ru/vacancies?employer_id={company_id}&page={page}&per_page=100"
+            response = requests.get(url)
+            if response.status_code == 200:
+                vacancy = response.json().get('items', [])
+                if not vacancy:
+                    break
+                list_vacancy.extend(vacancy)
+                page += 1
+            else:
+                print(f'Ошибка: {response.status_code} для компании ID {company_id}')
+                break
 
     return list_vacancy
 
 
-def get_list_bd(vacancies):
+def get_list_bd(data):
     """Функция для преобразования данных для БД"""
     result = []
-    for item in vacancies:
+    for item in data:
         company_name = item['employer']['name']
         company_id = item['employer']['id']
         company_url = item['employer']['url']

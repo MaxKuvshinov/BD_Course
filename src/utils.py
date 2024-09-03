@@ -4,12 +4,12 @@ import psycopg2
 def create_db(database_name: str, **params: dict) -> None:
     """Создание базы данных"""
 
-    conn = psycopg2.connect(dbname=database_name, **params)
+    conn = psycopg2.connect(dbname='postgres', **params)
     conn.autocommit = True
 
     cur = conn.cursor()
 
-    cur.execute(f"DROP DATABASE {database_name}")
+    cur.execute(f"DROP DATABASE IF EXISTS {database_name}")
     cur.execute(f"CREATE DATABASE {database_name}")
 
     conn.close()
