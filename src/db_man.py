@@ -1,5 +1,6 @@
+from typing import Any, List, Optional, Tuple
+
 import psycopg2
-from typing import List, Optional, Tuple, Any
 
 
 class DBManager:

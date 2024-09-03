@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 import requests
-from typing import List, Dict, Any
 
 
 def get_companies() -> List[Dict[str, Any]]:

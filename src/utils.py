@@ -1,5 +1,6 @@
+from typing import Any, Dict, List
+
 import psycopg2
-from typing import List, Any, Dict
 
 
 def create_db(database_name: str, **params: dict) -> None:
